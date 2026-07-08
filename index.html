@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#faf6f0">
-<title>DEC UE2 — Cas pratique (maquette)</title>
+<title>DEC UE2 — Révisions</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -167,6 +167,8 @@ p  { margin: 0 0 1em; }
 
 /* ===== QUIZ CARD ===== */
 .progress-row { display: flex; align-items: center; gap: 10px; padding: 14px 20px 0; }
+.session-nav { display: flex; gap: 10px; padding: 4px 20px 0; }
+.session-nav .btn { min-height: 42px; font-size: 13.5px; }
 .progress-bar { flex: 1; height: 4px; background: var(--rule-soft); border-radius: 4px; overflow: hidden; }
 .progress-bar > i { display: block; height: 100%; background: var(--cac); border-radius: 4px; transition: width .25s; }
 .progress-txt { font-family: var(--font-mono); font-size: 11px; color: var(--ink-mute); flex-shrink: 0; }
@@ -331,6 +333,9 @@ textarea.justif::placeholder { color: var(--ink-mute); }
    AUTH SCREENS
    =================================================================== */
 .screen-auth { padding: 48px 28px 40px; min-height: 100vh; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; }
+.auth-header { display: flex; justify-content: flex-end; margin-bottom: 32px; }
+.auth-logo-link { font-family: 'Georgia', 'Times New Roman', serif; font-weight: 700; font-size: 15px; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; background: #faf6f0; padding: 2px 0; }
+.auth-logo-link em { font-style: italic; color: var(--ec); font-weight: 400; }
 .screen-auth .masthead { margin-bottom: 32px; }
 .screen-auth .masthead .kicker { margin-bottom: 12px; }
 .screen-auth .masthead h1 { font-size: 34px; line-height: 1.08; margin-bottom: 12px; }
@@ -458,7 +463,7 @@ textarea.justif::placeholder { color: var(--ink-mute); }
       </button>
     </div>
     <div class="home-head">
-      <div class="kicker">Diplôme d'expertise comptable — Épreuve n°2</div>
+      <div class="kicker">DEC · UE 2</div>
       <h1>Révision légale <em>&amp; contractuelle</em> des comptes</h1>
       <p>Une maquette pour préparer le cas pratique de 4h30 : appliquer les règles, pas seulement les réciter.</p>
     </div>
@@ -481,16 +486,6 @@ textarea.justif::placeholder { color: var(--ink-mute); }
         <div class="tx"><h3>Vrai / Faux justifié</h3><p>Tu dois écrire pourquoi — muscle la rédaction QRC (série de 10)</p></div>
         <div class="chev">›</div>
       </button>
-      <button class="module-card" data-nav="seuils">
-        <div class="ic" style="background:var(--bg-deep);">📐</div>
-        <div class="tx"><h3>Seuils &amp; délais</h3><p>Les chiffres qui font perdre des points bêtement</p></div>
-        <div class="chev">›</div>
-      </button>
-      <button class="module-card" data-nav="banque">
-        <div class="ic" style="background:var(--cac-soft);">📚</div>
-        <div class="tx"><h3>Banque de règles</h3><p>Règles issues des annales, classées par source</p></div>
-        <div class="chev">›</div>
-      </button>
       <button class="module-card" data-nav="sourcequiz">
         <div class="ic" style="background:var(--bg-deep);">📖</div>
         <div class="tx"><h3>Sources</h3><p>Devine dans quel ouvrage se trouve la règle (série de 10)</p></div>
@@ -499,6 +494,20 @@ textarea.justif::placeholder { color: var(--ink-mute); }
       <button class="module-card" data-nav="drill">
         <div class="ic" style="background:var(--ec-soft);">⏱️</div>
         <div class="tx"><h3>Drill chronométré</h3><p>Rafale de 3 minutes, pour s'entraîner sous pression</p></div>
+        <div class="chev">›</div>
+      </button>
+    </div>
+
+    <div class="section-label">Modules informatifs</div>
+    <div class="module-grid">
+      <button class="module-card" data-nav="banque">
+        <div class="ic" style="background:var(--cac-soft);">📚</div>
+        <div class="tx"><h3>Banque de règles</h3><p>Règles issues des annales, classées par source</p></div>
+        <div class="chev">›</div>
+      </button>
+      <button class="module-card" data-nav="seuils">
+        <div class="ic" style="background:var(--bg-deep);">📐</div>
+        <div class="tx"><h3>Seuils &amp; délais</h3><p>Les chiffres qui font perdre des points bêtement</p></div>
         <div class="chev">›</div>
       </button>
     </div>
@@ -548,6 +557,10 @@ textarea.justif::placeholder { color: var(--ink-mute); }
       <div class="progress-bar"><i id="sit-progress-fill" style="width:0%"></i></div>
       <div class="progress-txt" id="sit-progress-txt">1/15</div>
     </div>
+    <div class="session-nav">
+      <button class="btn secondary" id="sit-nav-prev">← Précédent</button>
+      <button class="btn ghost" id="sit-nav-skip">Passer →</button>
+    </div>
     <div class="quiz-card" id="sit-quiz-card"></div>
   </section>
 
@@ -560,6 +573,10 @@ textarea.justif::placeholder { color: var(--ink-mute); }
     <div class="progress-row">
       <div class="progress-bar"><i id="vf-progress-fill" style="width:0%"></i></div>
       <div class="progress-txt" id="vf-progress-txt">1/10</div>
+    </div>
+    <div class="session-nav">
+      <button class="btn secondary" id="vf-nav-prev">← Précédent</button>
+      <button class="btn ghost" id="vf-nav-skip">Passer →</button>
     </div>
     <div class="quiz-card" id="vf-quiz-card"></div>
   </section>
@@ -603,6 +620,10 @@ textarea.justif::placeholder { color: var(--ink-mute); }
     <div class="progress-row">
       <div class="progress-bar"><i id="sq-progress-fill" style="width:0%"></i></div>
       <div class="progress-txt" id="sq-progress-txt">1/10</div>
+    </div>
+    <div class="session-nav">
+      <button class="btn secondary" id="sq-nav-prev">← Précédent</button>
+      <button class="btn ghost" id="sq-nav-skip">Passer →</button>
     </div>
     <div class="quiz-card" id="sq-quiz-card"></div>
   </section>
@@ -777,6 +798,9 @@ function renderAuth(){
   const mode = Auth.mode, err = Auth.error, info = Auth.info;
   root.innerHTML = `
     <div class="screen-auth">
+      <div class="auth-header">
+        <a href="https://www.dec-ouverte.fr" target="_blank" class="auth-logo-link">DEC-<em>ouverte</em></a>
+      </div>
       <div class="masthead">
         <div class="kicker">DEC · UE 2</div>
         <h1>Révision légale<br>&amp; <em>contractuelle</em></h1>
@@ -1099,14 +1123,39 @@ function nav(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
   document.getElementById('view-'+view).classList.remove('hidden');
   window.scrollTo(0,0);
-  if(view==='situation'){ State.sit = {i:0,score:0,items:drawSession(SITUATIONS)}; renderSituation(); }
-  if(view==='vraifaux'){ State.vf = {i:0,score:0,items:drawSession(VRAIFAUX)}; renderVF(); }
+  if(view==='situation'){ State.sit = {i:0,score:0,items:drawSession(SITUATIONS)}; bindSessionNav('sit', ()=>State.sit, renderSituation); renderSituation(); }
+  if(view==='vraifaux'){ State.vf = {i:0,score:0,items:drawSession(VRAIFAUX)}; bindSessionNav('vf', ()=>State.vf, renderVF); renderVF(); }
   if(view==='seuils') renderSeuils();
   if(view==='banque') renderBanque();
-  if(view==='sourcequiz') startSourceQuiz();
+  if(view==='sourcequiz'){ startSourceQuiz(); bindSessionNav('sq', ()=>State.sq, renderSourceQuiz); }
   if(view==='drill') startDrill();
   if(view==='settings') renderSettingsList();
   if(view==='home') updateDashStats();
+}
+
+// Boutons "← Précédent" / "Passer →" communs aux sessions de 10 questions.
+// Passer/revenir n'enregistre pas de réponse (pas d'appel à trackAnswer) : on peut
+// naviguer librement dans la série sans que ça compte comme vu/maîtrisé/raté.
+function bindSessionNav(prefix, getState, renderFn){
+  const prevBtn = document.getElementById(prefix+'-nav-prev');
+  const skipBtn = document.getElementById(prefix+'-nav-skip');
+  if(!prevBtn || !skipBtn) return;
+  prevBtn.onclick = () => {
+    const s = getState();
+    if(s.i > 0){ s.i--; renderFn(); }
+  };
+  skipBtn.onclick = () => {
+    const s = getState();
+    s.i++; renderFn();
+  };
+}
+
+function updateSessionNavState(prefix, s){
+  const prevBtn = document.getElementById(prefix+'-nav-prev');
+  const skipBtn = document.getElementById(prefix+'-nav-skip');
+  const finished = s.i >= s.items.length;
+  if(prevBtn) prevBtn.disabled = s.i <= 0 || finished;
+  if(skipBtn) skipBtn.classList.toggle('hidden', finished);
 }
 document.addEventListener('click', e=>{
   const nb = e.target.closest('[data-nav]');
@@ -1143,11 +1192,13 @@ function renderSituation(){
         <button class="btn secondary" style="margin-top:10px;" onclick="nav('home')">Retour à l'accueil</button>
       </div>`;
     document.getElementById('sit-progress-fill').style.width='100%';
+    updateSessionNavState('sit', s);
     return;
   }
   const q = s.items[s.i];
   document.getElementById('sit-progress-fill').style.width = (s.i/s.items.length*100)+'%';
   document.getElementById('sit-progress-txt').textContent = (s.i+1)+'/'+s.items.length;
+  updateSessionNavState('sit', s);
   const letters = ['A','B','C','D'];
   document.getElementById('sit-quiz-card').innerHTML = `
     <div class="scenario-box">${q.scenario}</div>
@@ -1191,11 +1242,13 @@ function renderVF(){
         <button class="btn secondary" style="margin-top:10px;" onclick="nav('home')">Retour à l'accueil</button>
       </div>`;
     document.getElementById('vf-progress-fill').style.width='100%';
+    updateSessionNavState('vf', s);
     return;
   }
   const q = s.items[s.i];
   document.getElementById('vf-progress-fill').style.width = (s.i/s.items.length*100)+'%';
   document.getElementById('vf-progress-txt').textContent = (s.i+1)+'/'+s.items.length;
+  updateSessionNavState('vf', s);
   document.getElementById('vf-quiz-card').innerHTML = `
     <div class="question-txt" style="font-size:17px;">${q.statement}</div>
     <div class="vf-row">
@@ -1305,6 +1358,7 @@ function renderSourceQuiz(){
         <button class="btn cac" onclick="startSourceQuiz()">Rejouer avec 10 nouvelles règles</button>
       </div>`;
     document.getElementById('sq-progress-fill').style.width='100%';
+    updateSessionNavState('sq', s);
     return;
   }
   const item = s.items[s.i];
@@ -1313,6 +1367,7 @@ function renderSourceQuiz(){
   const correctIndex = options.indexOf(item.sheet);
   document.getElementById('sq-progress-fill').style.width = (s.i/s.items.length*100)+'%';
   document.getElementById('sq-progress-txt').textContent = (s.i+1)+'/'+s.items.length;
+  updateSessionNavState('sq', s);
   const letters = ['A','B','C','D'];
   document.getElementById('sq-quiz-card').innerHTML = `
     <div class="scenario-box">${item.rule}</div>
