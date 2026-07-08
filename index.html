@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#faf6f0">
-<title>DEC UE2 — Révisions</title>
+<title>DEC UE2 — Cas pratique (maquette)</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -130,6 +130,31 @@ p  { margin: 0 0 1em; }
 .home-head .kicker { margin-bottom: 10px; }
 .home-head h1 em { font-style: italic; font-weight: 400; color: var(--cac); }
 .home-head p { color: var(--ink-soft); font-size: 14px; max-width: 32ch; }
+
+.home-topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px; border-bottom: 1px solid var(--rule-soft);
+}
+.home-topbar .account-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; line-height: 1.15; overflow: hidden; }
+.home-topbar .acct-pseudo { font-family: var(--font-display); font-size: 17px; font-weight: 500; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-topbar .acct-email { font-family: var(--font-mono); font-size: 10px; color: var(--ink-mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.04em; }
+
+.hero { padding: 28px 20px 24px; }
+.hero .kicker { margin-bottom: 10px; }
+.hero h1 { font-size: 32px; line-height: 1.08; margin-bottom: 6px; }
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--cac); }
+.hero .sub { font-size: 14px; color: var(--ink-soft); }
+
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px;
+  background: var(--rule-soft); margin: 0; padding: 0;
+  border-top: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft);
+  width: 100%; text-align: left;
+}
+.stat-cell { background: var(--bg); padding: 18px 14px; text-align: left; }
+.stat-cell .stat-num { font-family: var(--font-display); font-size: 26px; line-height: 1; color: var(--ink); font-weight: 500; letter-spacing: -0.01em; }
+.stat-cell .stat-num .unit { font-family: var(--font-mono); font-size: 12px; color: var(--ink-mute); margin-left: 2px; }
+.stat-cell .stat-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); margin-top: 6px; }
 
 .stats-strip {
   display: flex; gap: 10px; margin: 18px 0 26px;
@@ -369,15 +394,9 @@ textarea.justif::placeholder { color: var(--ink-mute); }
 /* ===================================================================
    TOPBAR ACCUEIL + DASHBOARD SUIVI
    =================================================================== */
-.home-topbar { display: flex; align-items: center; justify-content: flex-end; padding: 14px 20px 0; gap: 8px; }
 .icon-btn { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--ink); flex-shrink: 0; }
 .icon-btn:active { background: var(--rule-soft); }
 .icon-btn svg { width: 21px; height: 21px; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-
-.dash-strip { display: flex; gap: 10px; margin: 6px 0 24px; width: 100%; text-align: left; background: none; border: 0; padding: 0; }
-.dash-chip { flex: 1; background: var(--paper); border: 1px solid var(--rule-soft); border-radius: var(--radius-m); padding: 12px 10px; }
-.dash-chip .n { font-family: var(--font-display); font-size: 21px; color: var(--cac); line-height: 1; }
-.dash-chip .l { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 4px; }
 
 /* ===================================================================
    MODAL "MA PROGRESSION"
@@ -461,19 +480,25 @@ textarea.justif::placeholder { color: var(--ink-mute); }
       <button class="icon-btn" data-nav="settings" aria-label="Paramètres" title="Paramètres">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
+      <div class="account-info">
+        <div class="acct-pseudo" id="acct-pseudo">—</div>
+        <div class="acct-email" id="acct-email"></div>
+      </div>
     </div>
-    <div class="home-head">
+
+    <div class="hero">
       <div class="kicker">DEC · UE 2</div>
       <h1>Révision légale <em>&amp; contractuelle</em> des comptes</h1>
-      <p>Une maquette pour préparer le cas pratique de 4h30 : appliquer les règles, pas seulement les réciter.</p>
+  
     </div>
 
-    <button class="dash-strip" id="btn-open-progress">
-      <div class="dash-chip"><div class="n"><span id="dash-mastered">0</span>/<span id="dash-total">356</span></div><div class="l">Maîtrisées</div></div>
-      <div class="dash-chip"><div class="n" id="dash-views">0</div><div class="l">Vues</div></div>
-      <div class="dash-chip"><div class="n" id="dash-streak">0 🔥</div><div class="l">Série</div></div>
+    <button class="stat-grid" id="btn-open-progress">
+      <div class="stat-cell"><div class="stat-num"><span id="dash-mastered">0</span><span class="unit">/<span id="dash-total">356</span></span></div><div class="stat-label">Maîtrisées</div></div>
+      <div class="stat-cell"><div class="stat-num" id="dash-views">0</div><div class="stat-label">Vues</div></div>
+      <div class="stat-cell"><div class="stat-num" id="dash-streak">0 🔥</div><div class="stat-label">Série</div></div>
     </button>
 
+    <div style="padding:24px 20px 0;">
     <div class="section-label">Modules</div>
     <div class="module-grid">
       <button class="module-card" data-nav="situation">
@@ -510,6 +535,7 @@ textarea.justif::placeholder { color: var(--ink-mute); }
         <div class="tx"><h3>Seuils &amp; délais</h3><p>Les chiffres qui font perdre des points bêtement</p></div>
         <div class="chev">›</div>
       </button>
+    </div>
     </div>
   </section>
 
@@ -804,7 +830,7 @@ function renderAuth(){
       <div class="masthead">
         <div class="kicker">DEC · UE 2</div>
         <h1>Révision légale<br>&amp; <em>contractuelle</em></h1>
-        <p>Cas pratique, mises en situation et vrai/faux — ta progression est sauvegardée sur ton compte.</p>
+        <p>Révisions basées sur les corrigés officiels.</p>
       </div>
       <div class="auth-tabs">
         <button type="button" class="auth-tab ${mode==='signin'?'active':''}" data-mode="signin">Connexion</button>
@@ -1172,6 +1198,10 @@ function toast(msg){
 function initApp(){
   State.sit = {i:0,score:0,items:[]};
   State.vf = {i:0,score:0,items:[]};
+  const pseudoEl = document.getElementById('acct-pseudo');
+  const emailEl = document.getElementById('acct-email');
+  if(pseudoEl) pseudoEl.textContent = Auth.profile?.pseudo || (Auth.user?.email || '').split('@')[0] || '—';
+  if(emailEl) emailEl.textContent = Auth.user?.email || '';
   nav('home');
   updateDashStats();
 }
