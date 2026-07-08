@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#faf6f0">
+<title>DEC UE2 — Cas pratique (maquette)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+button, input, textarea { font: inherit; color: inherit; }
+button { border: 0; background: none; cursor: pointer; padding: 0; }
+input, textarea { border: 0; background: none; outline: 0; }
+ul { list-style: none; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #faf6f0;
+  --bg-deep:   #f0ead9;
+  --paper:     #fffdf7;
+  --ink:       #1a1a1a;
+  --ink-soft:  #5a4a3a;
+  --ink-mute:  #8a7b68;
+  --ec:        #b5451e;
+  --ec-soft:   #f0dcce;
+  --cac:       #2d4a2f;
+  --cac-soft:  #d7e3d3;
+  --rule:      #d4c9b2;
+  --rule-soft: #e8dec8;
+  --ok:        #2d4a2f;
+  --warn:      #b5451e;
+
+  --font-display: "Iowan Old Style","Palatino Linotype","Palatino",Georgia,"Times New Roman",serif;
+  --font-body:    -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-mono:    ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+
+  --radius-s: 4px;
+  --radius-m: 10px;
+  --radius-l: 18px;
+  --touch: 48px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--rule-soft);
+  padding-bottom: 90px;
+}
+@media (min-width: 431px) {
+  body { padding: 24px 0; }
+  #app { min-height: calc(100vh - 48px); border-radius: var(--radius-l); overflow: hidden; }
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.015em; margin: 0; color: var(--ink); }
+h1 { font-size: 32px; line-height: 1.08; }
+h2 { font-size: 21px; line-height: 1.2; }
+h3 { font-size: 16px; line-height: 1.3; }
+p  { margin: 0 0 1em; }
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(250,246,240,0.92);
+  border-bottom: 1px solid var(--rule-soft);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  backdrop-filter: saturate(180%) blur(10px);
+}
+.topbar .back {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: -8px;
+}
+.topbar .back:active { background: var(--rule-soft); }
+.topbar .back svg { width: 20px; height: 20px; stroke: var(--ink); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.topbar .title { font-family: var(--font-display); font-size: 16px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar .title small { display: block; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); font-weight: 400; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--touch); padding: 0 22px; font-size: 15px; font-weight: 500;
+  border-radius: var(--radius-m); background: var(--ink); color: var(--bg); width: 100%;
+  transition: transform 0.1s;
+}
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn.secondary { background: var(--paper); color: var(--ink); border: 1px solid var(--rule); }
+.btn.ghost { background: transparent; color: var(--ink-soft); min-height: 44px; }
+.btn.cac { background: var(--cac); color: #fff; }
+.btn.ec { background: var(--ec); color: #fff; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 20px; font-weight: 600;
+}
+.badge.cac { background: var(--cac-soft); color: var(--cac); }
+.badge.ec  { background: var(--ec-soft); color: var(--ec); }
+.badge.neutral { background: var(--rule-soft); color: var(--ink-soft); }
+
+/* ===== ACCUEIL ===== */
+.screen-home { padding: 28px 20px 20px; }
+.home-head { margin-bottom: 24px; }
+.home-head .kicker { margin-bottom: 10px; }
+.home-head h1 em { font-style: italic; font-weight: 400; color: var(--cac); }
+.home-head p { color: var(--ink-soft); font-size: 14px; max-width: 32ch; }
+
+.stats-strip {
+  display: flex; gap: 10px; margin: 18px 0 26px;
+}
+.stat-chip {
+  flex: 1; background: var(--paper); border: 1px solid var(--rule-soft); border-radius: var(--radius-m);
+  padding: 12px 10px; text-align: center;
+}
+.stat-chip .n { font-family: var(--font-display); font-size: 22px; color: var(--cac); line-height: 1; }
+.stat-chip .l { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute); margin-top: 4px; }
+
+.module-grid { display: flex; flex-direction: column; gap: 12px; }
+.module-card {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--paper); border: 1px solid var(--rule-soft); border-radius: var(--radius-m);
+  padding: 16px; text-align: left; width: 100%;
+}
+.module-card:active { background: var(--bg-deep); }
+.module-card .ic {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.module-card .tx { flex: 1; min-width: 0; }
+.module-card .tx h3 { margin-bottom: 2px; }
+.module-card .tx p { margin: 0; font-size: 12.5px; color: var(--ink-mute); }
+.module-card .chev { color: var(--ink-mute); font-size: 18px; flex-shrink: 0; }
+
+/* ===== CONTENT / GENERIC ===== */
+.content { padding: 20px; }
+.section-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-mute); margin: 22px 0 10px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ===== QUIZ CARD ===== */
+.progress-row { display: flex; align-items: center; gap: 10px; padding: 14px 20px 0; }
+.progress-bar { flex: 1; height: 4px; background: var(--rule-soft); border-radius: 4px; overflow: hidden; }
+.progress-bar > i { display: block; height: 100%; background: var(--cac); border-radius: 4px; transition: width .25s; }
+.progress-txt { font-family: var(--font-mono); font-size: 11px; color: var(--ink-mute); flex-shrink: 0; }
+
+.quiz-card { padding: 18px 20px 24px; }
+.scenario-box {
+  background: var(--paper); border: 1px solid var(--rule-soft); border-left: 3px solid var(--cac);
+  border-radius: var(--radius-s); padding: 14px 16px; font-size: 14.5px; color: var(--ink-soft);
+  margin-bottom: 18px; line-height: 1.5;
+}
+.question-txt { font-family: var(--font-display); font-size: 19px; line-height: 1.3; margin-bottom: 18px; }
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+.option {
+  text-align: left; padding: 13px 15px; border-radius: var(--radius-m); border: 1px solid var(--rule);
+  background: var(--paper); font-size: 14.5px; display: flex; gap: 10px; align-items: flex-start;
+}
+.option:active { background: var(--bg-deep); }
+.option .letter {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--ink-mute);
+  flex-shrink: 0; width: 20px;
+}
+.option.correct { border-color: var(--cac); background: var(--cac-soft); }
+.option.correct .letter { color: var(--cac); }
+.option.wrong { border-color: var(--ec); background: var(--ec-soft); }
+.option.wrong .letter { color: var(--ec); }
+.option.disabled { opacity: 0.55; }
+
+.reveal-panel {
+  margin-top: 18px; padding: 15px 16px; border-radius: var(--radius-m);
+  background: var(--bg-deep); border: 1px solid var(--rule-soft);
+  font-size: 13.5px; color: var(--ink-soft); line-height: 1.55;
+}
+.reveal-panel .rp-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.reveal-panel .rp-head strong { font-family: var(--font-display); font-size: 15px; color: var(--ink); }
+.reveal-panel .rp-source { font-family: var(--font-mono); font-size: 11px; color: var(--ink-mute); margin-top: 8px; }
+
+.vf-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.vf-btn {
+  flex: 1; min-height: 52px; border-radius: var(--radius-m); border: 1px solid var(--rule);
+  background: var(--paper); font-size: 15px; font-weight: 600;
+}
+.vf-btn.true-pick { border-color: var(--cac); }
+.vf-btn.false-pick { border-color: var(--ec); }
+.vf-btn.selected.true-pick { background: var(--cac-soft); }
+.vf-btn.selected.false-pick { background: var(--ec-soft); }
+
+textarea.justif {
+  width: 100%; min-height: 70px; border: 1px solid var(--rule); border-radius: var(--radius-m);
+  padding: 12px 14px; font-size: 14px; background: var(--paper); resize: vertical; margin-bottom: 14px;
+}
+textarea.justif::placeholder { color: var(--ink-mute); }
+
+/* ===== BANQUE DE REGLES ===== */
+.search-box {
+  display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1px solid var(--rule);
+  border-radius: var(--radius-m); padding: 0 14px; height: 46px; margin-bottom: 14px;
+}
+.search-box input { flex: 1; font-size: 14.5px; }
+.filter-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; }
+.filter-chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.03em;
+  padding: 8px 13px; border-radius: 20px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  white-space: nowrap;
+}
+.chip.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.rule-item {
+  border-bottom: 1px solid var(--rule-soft); padding: 14px 0; cursor: pointer;
+}
+.rule-item .ri-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.rule-item .ri-sub { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-mute); }
+.rule-item .ri-txt { font-size: 14px; color: var(--ink); line-height: 1.45; }
+.rule-item .ri-txt.clamped { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rule-item .ri-source { font-family: var(--font-mono); font-size: 11px; color: var(--ink-mute); margin-top: 6px; }
+.rule-item.open .ri-txt { -webkit-line-clamp: unset; }
+.empty-state { text-align: center; padding: 50px 20px; color: var(--ink-mute); font-size: 14px; }
+
+/* ===== SEUILS ===== */
+.seuil-card {
+  background: var(--paper); border: 1px solid var(--rule-soft); border-radius: var(--radius-m);
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.seuil-card .sc-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.seuil-card .sc-num { font-family: var(--font-display); font-size: 20px; color: var(--cac); white-space: nowrap; }
+.seuil-card .sc-label { font-size: 13.5px; font-weight: 600; }
+.seuil-card .sc-detail { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; }
+.seuil-card .sc-source { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 6px; }
+
+.tabbar { display: flex; gap: 8px; padding: 4px 20px 14px; }
+.tabbar .tab {
+  flex: 1; text-align: center; padding: 10px 8px; border-radius: var(--radius-m); border: 1px solid var(--rule);
+  font-size: 13px; font-weight: 500; background: var(--paper);
+}
+.tabbar .tab.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* ===== TENDANCES ===== */
+.bar-row { margin-bottom: 12px; }
+.bar-row .br-label { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 5px; }
+.bar-row .br-label span:last-child { font-family: var(--font-mono); color: var(--ink-mute); }
+.bar-track { height: 9px; background: var(--rule-soft); border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 5px; background: var(--cac); }
+.bar-fill.ec { background: var(--ec); }
+
+.insight-box {
+  background: var(--bg-deep); border-radius: var(--radius-m); padding: 14px 16px; margin-bottom: 18px;
+  font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; border-left: 3px solid var(--cac);
+}
+
+/* ===== DRILL ===== */
+.timer-badge {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--ec);
+  background: var(--ec-soft); padding: 6px 12px; border-radius: 20px;
+}
+.score-screen { padding: 60px 24px; text-align: center; }
+.score-screen .big-score { font-family: var(--font-display); font-size: 54px; color: var(--cac); margin: 14px 0 6px; }
+
+/* footer sticky actions */
+.bottom-actions {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px; padding: 12px 20px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 60%, rgba(250,246,240,0));
+  display: flex; gap: 10px;
+}
+
+.hidden { display: none !important; }
+.toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 30px; font-size: 13px;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.toast.show { opacity: 1; }
+
+.overlay-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 28px;
+  max-width: 430px;
+  margin: 0 auto;
+}
+.overlay-screen code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-deep);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.loader-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--rule-soft);
+  border-top-color: var(--cac);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div id="loading-screen" class="overlay-screen">
+  <div class="loader-spinner"></div>
+  <p class="kicker" style="margin-top:16px;">Chargement des données…</p>
+</div>
+
+<div id="setup-screen" class="overlay-screen hidden">
+  <div class="kicker">Configuration requise</div>
+  <h2 style="margin:10px 0 14px;">Connecte ton Supabase</h2>
+  <p style="color:var(--ink-soft);font-size:14px;max-width:340px;line-height:1.5;">
+    Cette appli lit toutes ses données (règles, mises en situation, vrai/faux, seuils) depuis Supabase — rien n'est stocké dans ce fichier.
+    Ouvre le fichier HTML dans un éditeur, remplace <code>SUPABASE_URL</code> et <code>SUPABASE_ANON_KEY</code> en haut du script par ceux de ton projet, puis recharge la page.
+  </p>
+</div>
+
+<div id="error-screen" class="overlay-screen hidden">
+  <div class="kicker" style="color:var(--ec);">Erreur de connexion</div>
+  <h2 style="margin:10px 0 14px;">Impossible de charger les données</h2>
+  <p id="error-message" style="color:var(--ink-soft);font-size:14px;max-width:340px;margin-bottom:20px;line-height:1.5;"></p>
+  <button class="btn secondary" id="retry-btn" style="max-width:200px;">Réessayer</button>
+</div>
+
+<div id="app" class="hidden">
+
+  <!-- ============ ACCUEIL ============ -->
+  <section id="view-home" class="view screen-home">
+    <div class="home-head">
+      <div class="kicker">Diplôme d'expertise comptable — Épreuve n°2</div>
+      <h1>Révision légale <em>&amp; contractuelle</em> des comptes</h1>
+      <p>Une maquette pour préparer le cas pratique de 4h30 : appliquer les règles, pas seulement les réciter.</p>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stat-chip"><div class="n" id="stat-rules">—</div><div class="l">Règles réelles</div></div>
+      <div class="stat-chip"><div class="n" id="stat-sessions">—</div><div class="l">Sessions</div></div>
+      <div class="stat-chip"><div class="n">4h30</div><div class="l">Format épreuve</div></div>
+    </div>
+
+    <div class="section-label">Modules</div>
+    <div class="module-grid">
+      <button class="module-card" data-nav="situation">
+        <div class="ic" style="background:var(--cac-soft);">🧩</div>
+        <div class="tx"><h3>Mise en situation</h3><p>44 cas courts, façon épreuve — applique la règle</p></div>
+        <div class="chev">›</div>
+      </button>
+      <button class="module-card" data-nav="vraifaux">
+        <div class="ic" style="background:var(--ec-soft);">✒️</div>
+        <div class="tx"><h3>Vrai / Faux justifié</h3><p>Tu dois écrire pourquoi — muscle la rédaction QRC</p></div>
+        <div class="chev">›</div>
+      </button>
+      <button class="module-card" data-nav="seuils">
+        <div class="ic" style="background:var(--bg-deep);">📐</div>
+        <div class="tx"><h3>Seuils &amp; délais</h3><p>Les chiffres qui font perdre des points bêtement</p></div>
+        <div class="chev">›</div>
+      </button>
+      <button class="module-card" data-nav="banque">
+        <div class="ic" style="background:var(--cac-soft);">📚</div>
+        <div class="tx"><h3>Banque de règles</h3><p>356 règles issues des annales, classées par source</p></div>
+        <div class="chev">›</div>
+      </button>
+      <button class="module-card" data-nav="sourcequiz">
+        <div class="ic" style="background:var(--bg-deep);">📖</div>
+        <div class="tx"><h3>Sources</h3><p>Devine dans quel ouvrage se trouve la règle — 10 questions</p></div>
+        <div class="chev">›</div>
+      </button>
+      <button class="module-card" data-nav="drill">
+        <div class="ic" style="background:var(--ec-soft);">⏱️</div>
+        <div class="tx"><h3>Drill chronométré</h3><p>Rafale de 3 minutes, pour s'entraîner sous pression</p></div>
+        <div class="chev">›</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ MISE EN SITUATION ============ -->
+  <section id="view-situation" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Mise en situation<small>Cas pratique</small></div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-bar"><i id="sit-progress-fill" style="width:0%"></i></div>
+      <div class="progress-txt" id="sit-progress-txt">1/15</div>
+    </div>
+    <div class="quiz-card" id="sit-quiz-card"></div>
+  </section>
+
+  <!-- ============ VRAI / FAUX ============ -->
+  <section id="view-vraifaux" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Vrai / Faux justifié<small>Rédaction courte</small></div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-bar"><i id="vf-progress-fill" style="width:0%"></i></div>
+      <div class="progress-txt" id="vf-progress-txt">1/10</div>
+    </div>
+    <div class="quiz-card" id="vf-quiz-card"></div>
+  </section>
+
+  <!-- ============ SEUILS & DELAIS ============ -->
+  <section id="view-seuils" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Seuils &amp; délais<small>Référence rapide</small></div>
+    </div>
+    <div class="content" id="seuils-content"></div>
+  </section>
+
+  <!-- ============ BANQUE DE REGLES ============ -->
+  <section id="view-banque" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Banque de règles<small id="banque-count">356 règles</small></div>
+    </div>
+    <div class="content">
+      <div class="search-box">
+        <span>🔎</span>
+        <input type="text" id="banque-search" placeholder="Rechercher (mot-clé, article, NEP…)">
+      </div>
+      <div class="filter-chips" id="banque-type-chips">
+        <button class="chip active" data-type="all">Tout</button>
+        <button class="chip" data-type="CAC">CAC</button>
+        <button class="chip" data-type="EC">EC</button>
+      </div>
+      <div class="filter-chips" id="banque-sheet-chips"></div>
+      <div id="banque-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ DEVINE LA SOURCE ============ -->
+  <section id="view-sourcequiz" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Sources<small>Devine la source — 10 questions</small></div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-bar"><i id="sq-progress-fill" style="width:0%"></i></div>
+      <div class="progress-txt" id="sq-progress-txt">1/10</div>
+    </div>
+    <div class="quiz-card" id="sq-quiz-card"></div>
+  </section>
+
+  <!-- ============ DRILL ============ -->
+  <section id="view-drill" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Drill chronométré<small>Sous pression</small></div>
+      <div class="timer-badge" id="drill-timer">3:00</div>
+    </div>
+    <div id="drill-body"></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ===================================================================
+   CONFIGURATION SUPABASE
+   Remplace ces deux valeurs par celles de TON projet Supabase :
+   Project Settings > API > Project URL / anon public key
+   =================================================================== */
+const SUPABASE_URL = "https://mlppnktthqgipcgnpgnp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_2oilb7ofnczMgPlQVRNHwA_BSo5jUFT";
+
+let RULES = [];
+let SITUATIONS = [];
+let VRAIFAUX = [];
+let SEUILS_CONTENU = [];
+
+let sb = null;
+
+function isConfigured(){
+  return !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_ANON_KEY.includes('VOTRE_CLE');
+}
+
+async function loadData(){
+  if(!isConfigured()){
+    showScreen('setup');
+    return;
+  }
+  if(!window.supabase){
+    showScreen('error', "La librairie Supabase n'a pas pu être chargée (vérifie ta connexion internet).");
+    return;
+  }
+  showScreen('loading');
+  try {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const [rulesRes, sitRes, vfRes, seuilsRes] = await Promise.all([
+      sb.from('ue2_rules').select('*').order('id'),
+      sb.from('ue2_situations').select('*').order('id'),
+      sb.from('ue2_vraifaux').select('*').order('id'),
+      sb.from('ue2_seuils').select('*').order('id')
+    ]);
+    const errors = [rulesRes.error, sitRes.error, vfRes.error, seuilsRes.error].filter(Boolean);
+    if(errors.length){
+      throw new Error(errors.map(e=>e.message).join(' · '));
+    }
+    RULES = rulesRes.data || [];
+    SITUATIONS = (sitRes.data || []).map(r => ({
+      ...r,
+      options: [r.option_a, r.option_b, r.option_c, r.option_d],
+      correct: r.correct_index
+    }));
+    VRAIFAUX = (vfRes.data || []).map(r => ({
+      ...r,
+      answer: r.answer === true || r.answer === 'true' || r.answer === 'TRUE'
+    }));
+    SEUILS_CONTENU = seuilsRes.data || [];
+
+    if(RULES.length === 0 && SITUATIONS.length === 0 && VRAIFAUX.length === 0){
+      showScreen('error', "Connexion réussie, mais les tables sont vides. Vérifie que tu as bien importé les CSV dans Supabase (ue2_rules, ue2_situations, ue2_vraifaux, ue2_seuils).");
+      return;
+    }
+
+    showScreen('app');
+    initApp();
+  } catch(err){
+    showScreen('error', err.message || String(err));
+  }
+}
+
+function showScreen(which, errorMsg){
+  document.getElementById('loading-screen').classList.toggle('hidden', which !== 'loading');
+  document.getElementById('setup-screen').classList.toggle('hidden', which !== 'setup');
+  document.getElementById('error-screen').classList.toggle('hidden', which !== 'error');
+  document.getElementById('app').classList.toggle('hidden', which !== 'app');
+  if(which === 'error' && errorMsg){
+    document.getElementById('error-message').textContent = errorMsg;
+  }
+}
+
+document.getElementById('retry-btn')?.addEventListener('click', loadData);
+
+/* ===================================================================
+   ETAT & NAVIGATION
+   =================================================================== */
+const State = {
+  sit:{i:0,score:0,items:[]},
+  vf:{i:0,score:0,items:[]},
+  drill:{pool:[],i:0,score:0,timeLeft:180,timer:null},
+  banque:{type:'all',sheet:'all',q:''},
+  sq:{i:0,score:0,items:[],sheets:[]}
+};
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+function nav(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+  document.getElementById('view-'+view).classList.remove('hidden');
+  window.scrollTo(0,0);
+  if(view==='situation'){ if(State.sit.items.length===0) State.sit = {i:0,score:0,items:shuffle(SITUATIONS.slice())}; renderSituation(); }
+  if(view==='vraifaux'){ if(State.vf.items.length===0) State.vf = {i:0,score:0,items:shuffle(VRAIFAUX.slice())}; renderVF(); }
+  if(view==='seuils') renderSeuils();
+  if(view==='banque') renderBanque();
+  if(view==='sourcequiz') startSourceQuiz();
+  if(view==='drill') startDrill();
+}
+document.addEventListener('click', e=>{
+  const nb = e.target.closest('[data-nav]');
+  if(nb){ nav(nb.dataset.nav); }
+});
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+/* ---------- Initialisation une fois les données chargées ---------- */
+function initApp(){
+  document.getElementById('stat-rules').textContent = RULES.length;
+  document.getElementById('stat-sessions').textContent = new Set(RULES.map(r=>r.session)).size;
+  State.sit = {i:0,score:0,items:[]};
+  State.vf = {i:0,score:0,items:[]};
+  nav('home');
+}
+
+/* Lance le chargement des données depuis Supabase au démarrage */
+loadData();
+
+/* ---------- Mise en situation ---------- */
+function renderSituation(){
+  const s = State.sit;
+  if(s.i >= s.items.length){
+    document.getElementById('sit-quiz-card').innerHTML = `
+      <div class="score-screen">
+        <div class="kicker">Terminé</div>
+        <div class="big-score">${s.score}/${s.items.length}</div>
+        <p style="color:var(--ink-soft);font-size:14px;">Bonnes réponses sur cette série.</p>
+        <button class="btn cac" onclick="State.sit={i:0,score:0,items:shuffle(State.sit.items)};renderSituation()">Rejouer (ordre mélangé)</button>
+        <button class="btn secondary" style="margin-top:10px;" onclick="nav('home')">Retour à l'accueil</button>
+      </div>`;
+    document.getElementById('sit-progress-fill').style.width='100%';
+    return;
+  }
+  const q = s.items[s.i];
+  document.getElementById('sit-progress-fill').style.width = (s.i/s.items.length*100)+'%';
+  document.getElementById('sit-progress-txt').textContent = (s.i+1)+'/'+s.items.length;
+  const letters = ['A','B','C','D'];
+  document.getElementById('sit-quiz-card').innerHTML = `
+    <div class="scenario-box">${q.scenario}</div>
+    <div class="question-txt">${q.question}</div>
+    <div class="options" id="sit-options">
+      ${q.options.map((o,i)=>`<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${o}</span></button>`).join('')}
+    </div>
+    <div id="sit-reveal"></div>
+    <div id="sit-next" class="hidden" style="margin-top:16px;"><button class="btn cac" onclick="State.sit.i++;renderSituation()">Question suivante →</button></div>
+  `;
+  document.querySelectorAll('#sit-options .option').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.classList.contains('answered')) return;
+      document.querySelectorAll('#sit-options .option').forEach(b=>b.classList.add('disabled','answered'));
+      const i = +btn.dataset.i;
+      if(i===q.correct){ btn.classList.add('correct'); State.sit.score++; }
+      else { btn.classList.add('wrong'); document.querySelectorAll('#sit-options .option')[q.correct].classList.add('correct'); }
+      document.getElementById('sit-reveal').innerHTML = `
+        <div class="reveal-panel">
+          <div class="rp-head"><strong>${i===q.correct?'Exact.':'La bonne réponse était : '+letters[q.correct]}</strong></div>
+          ${q.explain}
+          <div class="rp-source">${q.source} · session ${q.session}</div>
+        </div>`;
+      document.getElementById('sit-next').classList.remove('hidden');
+    });
+  });
+}
+
+/* ---------- Vrai / Faux ---------- */
+function renderVF(){
+  const s = State.vf;
+  if(s.i >= s.items.length){
+    document.getElementById('vf-quiz-card').innerHTML = `
+      <div class="score-screen">
+        <div class="kicker">Terminé</div>
+        <div class="big-score">${s.score}/${s.items.length}</div>
+        <p style="color:var(--ink-soft);font-size:14px;">Bonnes réponses sur cette série.</p>
+        <button class="btn cac" onclick="State.vf={i:0,score:0,items:shuffle(State.vf.items)};renderVF()">Rejouer (ordre mélangé)</button>
+        <button class="btn secondary" style="margin-top:10px;" onclick="nav('home')">Retour à l'accueil</button>
+      </div>`;
+    document.getElementById('vf-progress-fill').style.width='100%';
+    return;
+  }
+  const q = s.items[s.i];
+  document.getElementById('vf-progress-fill').style.width = (s.i/s.items.length*100)+'%';
+  document.getElementById('vf-progress-txt').textContent = (s.i+1)+'/'+s.items.length;
+  document.getElementById('vf-quiz-card').innerHTML = `
+    <div class="question-txt" style="font-size:17px;">${q.statement}</div>
+    <div class="vf-row">
+      <button class="vf-btn true-pick" data-v="true">Vrai</button>
+      <button class="vf-btn false-pick" data-v="false">Faux</button>
+    </div>
+    <textarea class="justif" placeholder="Justifie ta réponse en une phrase (facultatif, mais c'est ce qui compte à l'écrit)…"></textarea>
+    <button class="btn secondary" id="vf-check">Vérifier</button>
+    <div id="vf-reveal"></div>
+    <div id="vf-next" class="hidden" style="margin-top:16px;"><button class="btn cac" onclick="State.vf.i++;renderVF()">Question suivante →</button></div>
+  `;
+  let picked = null;
+  document.querySelectorAll('.vf-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.vf-btn').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      picked = b.dataset.v === 'true';
+    });
+  });
+  document.getElementById('vf-check').addEventListener('click', ()=>{
+    if(picked===null){ toast('Choisis Vrai ou Faux d\'abord'); return; }
+    document.getElementById('vf-check').disabled = true;
+    document.querySelectorAll('.vf-btn').forEach(b=>b.style.pointerEvents='none');
+    const correct = picked === q.answer;
+    if(correct) State.vf.score++;
+    document.getElementById('vf-reveal').innerHTML = `
+      <div class="reveal-panel">
+        <div class="rp-head"><strong>${correct?'Exact.':'Réponse : '+(q.answer?'Vrai':'Faux')}</strong></div>
+        ${q.explain}
+        <div class="rp-source">${q.source} · session ${q.session}</div>
+      </div>`;
+    document.getElementById('vf-next').classList.remove('hidden');
+  });
+}
+
+/* ---------- Seuils & délais ---------- */
+function renderSeuils(){
+  document.getElementById('seuils-content').innerHTML = SEUILS_CONTENU.map(s=>`
+    <div class="seuil-card">
+      <div class="sc-top"><span class="sc-label">${s.label}</span><span class="sc-num">${s.num}</span></div>
+      <div class="sc-detail">${s.detail}</div>
+      <div class="sc-source">${s.source}</div>
+    </div>`).join('');
+}
+
+/* ---------- Banque de règles ---------- */
+function sheetChipsHtml(){
+  const sheets = [...new Set(RULES.map(r=>r.sheet))];
+  return `<button class="chip active" data-sheet="all">Toutes les sources</button>` +
+    sheets.map(s=>`<button class="chip" data-sheet="${s}">${s}</button>`).join('');
+}
+function renderBanque(){
+  document.getElementById('banque-sheet-chips').innerHTML = sheetChipsHtml();
+  bindBanqueChips();
+  document.getElementById('banque-search').value = State.banque.q;
+  document.getElementById('banque-search').oninput = (e)=>{ State.banque.q = e.target.value.toLowerCase(); drawBanqueList(); };
+  drawBanqueList();
+}
+function bindBanqueChips(){
+  document.querySelectorAll('#banque-type-chips .chip').forEach(c=>{
+    c.onclick = ()=>{ State.banque.type = c.dataset.type; document.querySelectorAll('#banque-type-chips .chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); drawBanqueList(); };
+  });
+  document.querySelectorAll('#banque-sheet-chips .chip').forEach(c=>{
+    c.onclick = ()=>{ State.banque.sheet = c.dataset.sheet; document.querySelectorAll('#banque-sheet-chips .chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); drawBanqueList(); };
+  });
+}
+function drawBanqueList(){
+  const {type, sheet, q} = State.banque;
+  let items = RULES.filter(r=>
+    (type==='all'||r.type===type) &&
+    (sheet==='all'||r.sheet===sheet) &&
+    (q==='' || r.rule.toLowerCase().includes(q) || r.source.toLowerCase().includes(q) || (r.sub||'').toLowerCase().includes(q))
+  );
+  document.getElementById('banque-count').textContent = items.length + ' règle' + (items.length>1?'s':'');
+  const el = document.getElementById('banque-list');
+  if(items.length===0){ el.innerHTML = '<div class="empty-state">Aucune règle ne correspond à ta recherche.</div>'; return; }
+  el.innerHTML = items.slice(0,200).map(r=>`
+    <div class="rule-item" data-id="${r.id}">
+      <div class="ri-top">
+        <span class="badge ${r.type==='CAC'?'cac':'ec'}">${r.type}</span>
+        <span class="ri-sub">${r.sub||r.sheet}</span>
+      </div>
+      <div class="ri-txt clamped">${r.rule}</div>
+      <div class="ri-source">${r.source} · ${r.session}</div>
+    </div>`).join('') + (items.length>200 ? `<div class="empty-state">+ ${items.length-200} autres résultats — affine ta recherche</div>` : '');
+  el.querySelectorAll('.rule-item').forEach(it=>{
+    it.addEventListener('click', ()=> it.classList.toggle('open'));
+  });
+}
+
+/* ---------- Sources : devine la source ---------- */
+function startSourceQuiz(){
+  const sheets = [...new Set(RULES.map(r=>r.sheet))];
+  const items = shuffle(RULES.slice()).slice(0,10);
+  State.sq = { i:0, score:0, items, sheets };
+  renderSourceQuiz();
+}
+function renderSourceQuiz(){
+  const s = State.sq;
+  if(s.i >= s.items.length){
+    document.getElementById('sq-quiz-card').innerHTML = `
+      <div class="score-screen">
+        <div class="kicker">Terminé</div>
+        <div class="big-score">${s.score}/${s.items.length}</div>
+        <p style="color:var(--ink-soft);font-size:14px;">Bonnes réponses — nouvelles règles à chaque partie.</p>
+        <button class="btn cac" onclick="startSourceQuiz()">Rejouer avec 10 nouvelles règles</button>
+      </div>`;
+    document.getElementById('sq-progress-fill').style.width='100%';
+    return;
+  }
+  const item = s.items[s.i];
+  const wrong = shuffle(s.sheets.filter(x=>x!==item.sheet)).slice(0,3);
+  const options = shuffle([item.sheet, ...wrong]);
+  const correctIndex = options.indexOf(item.sheet);
+  document.getElementById('sq-progress-fill').style.width = (s.i/s.items.length*100)+'%';
+  document.getElementById('sq-progress-txt').textContent = (s.i+1)+'/'+s.items.length;
+  const letters = ['A','B','C','D'];
+  document.getElementById('sq-quiz-card').innerHTML = `
+    <div class="scenario-box">${item.rule}</div>
+    <div class="question-txt" style="font-size:17px;">Cette règle, tu la trouves dans quelle source ?</div>
+    <div class="options" id="sq-options">
+      ${options.map((o,i)=>`<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${o}</span></button>`).join('')}
+    </div>
+    <div id="sq-reveal"></div>
+    <div id="sq-next" class="hidden" style="margin-top:16px;"><button class="btn cac" onclick="State.sq.i++;renderSourceQuiz()">Question suivante →</button></div>
+  `;
+  document.querySelectorAll('#sq-options .option').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.classList.contains('answered')) return;
+      document.querySelectorAll('#sq-options .option').forEach(b=>b.classList.add('disabled','answered'));
+      const i = +btn.dataset.i;
+      if(i===correctIndex){ btn.classList.add('correct'); State.sq.score++; }
+      else { btn.classList.add('wrong'); document.querySelectorAll('#sq-options .option')[correctIndex].classList.add('correct'); }
+      document.getElementById('sq-reveal').innerHTML = `
+        <div class="reveal-panel">
+          <div class="rp-head"><strong>${i===correctIndex?'Exact.':'La bonne réponse : '+item.sheet}</strong></div>
+          ${item.sub ? 'Thème : '+item.sub.toLowerCase() : ''}
+          <div class="rp-source">${item.source} · session ${item.session}</div>
+        </div>`;
+      document.getElementById('sq-next').classList.remove('hidden');
+    });
+  });
+}
+
+/* ---------- Drill chronométré ---------- */
+function startDrill(){
+  clearInterval(State.drill.timer);
+  const pool = [
+    ...SITUATIONS.map(s=>({kind:'sit', ...s})),
+    ...VRAIFAUX.map(v=>({kind:'vf', ...v}))
+  ];
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  State.drill = { pool, i:0, score:0, timeLeft:180, timer:null };
+  document.getElementById('drill-timer').textContent = '3:00';
+  drawDrillQuestion();
+  State.drill.timer = setInterval(()=>{
+    State.drill.timeLeft--;
+    const m = Math.floor(State.drill.timeLeft/60), sec = String(State.drill.timeLeft%60).padStart(2,'0');
+    document.getElementById('drill-timer').textContent = m+':'+sec;
+    if(State.drill.timeLeft<=0){ clearInterval(State.drill.timer); endDrill(); }
+  },1000);
+}
+function drawDrillQuestion(){
+  const d = State.drill;
+  if(d.i >= d.pool.length){ endDrill(); return; }
+  const item = d.pool[d.i];
+  const body = document.getElementById('drill-body');
+  if(item.kind==='sit'){
+    const letters=['A','B','C','D'];
+    body.innerHTML = `
+      <div class="quiz-card">
+        <div class="scenario-box">${item.scenario}</div>
+        <div class="question-txt">${item.question}</div>
+        <div class="options" id="drill-options">
+          ${item.options.map((o,i)=>`<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${o}</span></button>`).join('')}
+        </div>
+      </div>`;
+    document.querySelectorAll('#drill-options .option').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(!State.drill.timer) return;
+        document.querySelectorAll('#drill-options .option').forEach(b=>b.style.pointerEvents='none');
+        const i = +btn.dataset.i;
+        if(i===item.correct){ btn.classList.add('correct'); State.drill.score++; }
+        else btn.classList.add('wrong');
+        setTimeout(()=>{ State.drill.i++; drawDrillQuestion(); }, 500);
+      });
+    });
+  } else {
+    body.innerHTML = `
+      <div class="quiz-card">
+        <div class="question-txt" style="font-size:17px;">${item.statement}</div>
+        <div class="vf-row" id="drill-vf">
+          <button class="vf-btn true-pick" data-v="true">Vrai</button>
+          <button class="vf-btn false-pick" data-v="false">Faux</button>
+        </div>
+      </div>`;
+    document.querySelectorAll('#drill-vf .vf-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(!State.drill.timer) return;
+        document.querySelectorAll('#drill-vf .vf-btn').forEach(b=>b.style.pointerEvents='none');
+        const v = btn.dataset.v === 'true';
+        if(v===item.answer){ btn.classList.add(v?'true-pick':'false-pick'); btn.style.background='var(--cac-soft)'; State.drill.score++; }
+        else btn.style.background='var(--ec-soft)';
+        setTimeout(()=>{ State.drill.i++; drawDrillQuestion(); }, 500);
+      });
+    });
+  }
+}
+function endDrill(){
+  clearInterval(State.drill.timer);
+  State.drill.timer = null;
+  document.getElementById('drill-body').innerHTML = `
+    <div class="score-screen">
+      <div class="kicker">Temps écoulé</div>
+      <div class="big-score">${State.drill.score}</div>
+      <p style="color:var(--ink-soft);font-size:14px;">bonnes réponses sur ${State.drill.i} question${State.drill.i>1?'s':''} traitée${State.drill.i>1?'s':''}</p>
+      <button class="btn cac" onclick="startDrill()">Relancer un drill</button>
+    </div>`;
+}
+</script>
+</body>
+</html>
