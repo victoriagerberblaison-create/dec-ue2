@@ -326,6 +326,100 @@ textarea.justif::placeholder { color: var(--ink-mute); }
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===================================================================
+   AUTH SCREENS
+   =================================================================== */
+.screen-auth { padding: 48px 28px 40px; min-height: 100vh; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; }
+.screen-auth .masthead { margin-bottom: 32px; }
+.screen-auth .masthead .kicker { margin-bottom: 12px; }
+.screen-auth .masthead h1 { font-size: 34px; line-height: 1.08; margin-bottom: 12px; }
+.screen-auth .masthead h1 em { font-style: italic; font-weight: 400; color: var(--ec); }
+.screen-auth .masthead p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.5; max-width: 34ch; }
+.auth-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--rule); margin-bottom: 26px; }
+.auth-tab { flex: 1; padding: 13px 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.auth-tab.active { color: var(--ink); border-bottom-color: var(--ec); }
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form .field label { display:block; margin-bottom: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); }
+.auth-form input[type="email"], .auth-form input[type="password"], .auth-form input[type="text"] {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius-m);
+  padding: 13px 15px; font-size: 16px; color: var(--ink); min-height: var(--touch); width: 100%;
+}
+.auth-form input:focus { border-color: var(--ink); outline: none; }
+.auth-form .forgot { align-self: flex-end; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; padding: 4px; margin: -4px; }
+.auth-form .submit { margin-top: 8px; }
+.auth-msg { font-size: 13px; line-height: 1.45; padding: 10px 14px; border-radius: 0 var(--radius-s) var(--radius-s) 0; margin-bottom: 4px; }
+.auth-msg.error { color: var(--ec); background: rgba(181,69,30,0.06); border-left: 2px solid var(--ec); }
+.auth-msg.info { color: var(--ink-soft); background: var(--bg-deep); border-left: 2px solid var(--ok); }
+.screen-auth .disclaimer { margin-top: auto; padding-top: 30px; font-size: 12px; color: var(--ink-mute); line-height: 1.5; }
+.back-to-signin { padding: 0; justify-content: flex-start; min-height: auto; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 16px; }
+
+.screen-verify { padding: 60px 28px 40px; min-height: 100vh; max-width: 430px; margin: 0 auto; display: flex; flex-direction: column; text-align: left; }
+.screen-verify .kicker { margin-bottom: 14px; }
+.screen-verify h1 { font-size: 32px; line-height: 1.08; margin-bottom: 18px; }
+.screen-verify p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 14px; }
+.screen-verify .email-echo { font-family: var(--font-mono); font-size: 13px; background: var(--bg-deep); padding: 10px 14px; border-radius: var(--radius-s); color: var(--ink); word-break: break-all; margin-bottom: 24px; display: inline-block; }
+.screen-verify .actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+
+/* ===================================================================
+   TOPBAR ACCUEIL + DASHBOARD SUIVI
+   =================================================================== */
+.home-topbar { display: flex; align-items: center; justify-content: flex-end; padding: 14px 20px 0; gap: 8px; }
+.icon-btn { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--ink); flex-shrink: 0; }
+.icon-btn:active { background: var(--rule-soft); }
+.icon-btn svg { width: 21px; height: 21px; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+.dash-strip { display: flex; gap: 10px; margin: 6px 0 24px; width: 100%; text-align: left; background: none; border: 0; padding: 0; }
+.dash-chip { flex: 1; background: var(--paper); border: 1px solid var(--rule-soft); border-radius: var(--radius-m); padding: 12px 10px; }
+.dash-chip .n { font-family: var(--font-display); font-size: 21px; color: var(--cac); line-height: 1; }
+.dash-chip .l { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 4px; }
+
+/* ===================================================================
+   MODAL "MA PROGRESSION"
+   =================================================================== */
+.progress-overlay {
+  position: fixed; inset: 0; background: rgba(26,26,26,0.45); z-index: 300;
+  display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.progress-overlay.open { opacity: 1; pointer-events: all; }
+.progress-sheet {
+  background: var(--bg); width: 100%; max-width: 430px; border-radius: 24px 24px 0 0;
+  padding: 10px 24px calc(24px + env(safe-area-inset-bottom)); max-height: 88vh; overflow-y: auto;
+  transform: translateY(100%); transition: transform 0.25s;
+}
+.progress-overlay.open .progress-sheet { transform: translateY(0); }
+.progress-handle { width: 36px; height: 4px; background: var(--rule); border-radius: 4px; margin: 6px auto 18px; }
+.progress-card { background: var(--paper); border: 1px solid var(--rule-soft); border-radius: var(--radius-l); padding: 22px 20px; }
+.progress-card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+.progress-card-title { font-family: var(--font-display); font-size: 19px; }
+.progress-card-title em { font-style: italic; color: var(--cac); }
+.progress-card-sub { font-size: 12.5px; color: var(--ink-mute); margin-top: 2px; }
+.progress-flame { font-size: 26px; }
+.progress-kpis { display: flex; gap: 10px; margin-bottom: 20px; }
+.progress-kpi { flex: 1; text-align: center; background: var(--bg-deep); border-radius: 12px; padding: 14px 6px; }
+.progress-kpi .num { font-family: var(--font-display); font-size: 22px; color: var(--cac); line-height: 1; }
+.progress-kpi .num .unit { font-size: 12px; color: var(--ink-mute); }
+.progress-kpi .lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 6px; }
+.progress-chart-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 10px; }
+.progress-bars-wrap { display: flex; justify-content: space-between; align-items: flex-end; height: 70px; gap: 6px; }
+.progress-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.progress-bar-inner { width: 100%; flex: 1; display: flex; align-items: flex-end; }
+.progress-bar-el { width: 100%; border-radius: 4px 4px 0 0; background: var(--rule-soft); min-height: 4px; }
+.progress-bar-el.has-data { background: var(--ec); }
+.progress-bar-el.is-today { background: var(--cac); }
+.progress-day { font-family: var(--font-mono); font-size: 9px; color: var(--ink-mute); text-transform: uppercase; }
+.progress-day.is-today { color: var(--cac); font-weight: 700; }
+.progress-actions { margin-top: 20px; }
+
+/* ===================================================================
+   PARAMETRES
+   =================================================================== */
+.settings-list { padding: 0; margin: 0; }
+.settings-row { display: flex; align-items: center; gap: 16px; padding: 17px 4px; border-bottom: 1px solid var(--rule-soft); width: 100%; text-align: left; min-height: 60px; background: none; }
+.settings-row:active { background: var(--bg-deep); }
+.settings-row .s-label { flex: 1; font-size: 15px; color: var(--ink); }
+.settings-row.danger .s-label { color: var(--ec); }
+.settings-row .s-meta { font-family: var(--font-mono); font-size: 12px; color: var(--ink-mute); }
 </style>
 </head>
 <body>
@@ -351,32 +445,40 @@ textarea.justif::placeholder { color: var(--ink-mute); }
   <button class="btn secondary" id="retry-btn" style="max-width:200px;">Réessayer</button>
 </div>
 
+<div id="auth-screen" class="hidden"></div>
+<div id="verify-screen" class="hidden"></div>
+
 <div id="app" class="hidden">
 
   <!-- ============ ACCUEIL ============ -->
   <section id="view-home" class="view screen-home">
+    <div class="home-topbar">
+      <button class="icon-btn" data-nav="settings" aria-label="Paramètres" title="Paramètres">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
     <div class="home-head">
       <div class="kicker">Diplôme d'expertise comptable — Épreuve n°2</div>
       <h1>Révision légale <em>&amp; contractuelle</em> des comptes</h1>
       <p>Une maquette pour préparer le cas pratique de 4h30 : appliquer les règles, pas seulement les réciter.</p>
     </div>
 
-    <div class="stats-strip">
-      <div class="stat-chip"><div class="n" id="stat-rules">—</div><div class="l">Règles réelles</div></div>
-      <div class="stat-chip"><div class="n" id="stat-sessions">—</div><div class="l">Sessions</div></div>
-      <div class="stat-chip"><div class="n">4h30</div><div class="l">Format épreuve</div></div>
-    </div>
+    <button class="dash-strip" id="btn-open-progress">
+      <div class="dash-chip"><div class="n"><span id="dash-mastered">0</span>/<span id="dash-total">356</span></div><div class="l">Maîtrisées</div></div>
+      <div class="dash-chip"><div class="n" id="dash-views">0</div><div class="l">Vues</div></div>
+      <div class="dash-chip"><div class="n" id="dash-streak">0 🔥</div><div class="l">Série</div></div>
+    </button>
 
     <div class="section-label">Modules</div>
     <div class="module-grid">
       <button class="module-card" data-nav="situation">
         <div class="ic" style="background:var(--cac-soft);">🧩</div>
-        <div class="tx"><h3>Mise en situation</h3><p>44 cas courts, façon épreuve — applique la règle</p></div>
+        <div class="tx"><h3>Mise en situation</h3><p>Cas pratique façon épreuve — applique la règle (série de 10, tirage aléatoire)</p></div>
         <div class="chev">›</div>
       </button>
       <button class="module-card" data-nav="vraifaux">
         <div class="ic" style="background:var(--ec-soft);">✒️</div>
-        <div class="tx"><h3>Vrai / Faux justifié</h3><p>Tu dois écrire pourquoi — muscle la rédaction QRC</p></div>
+        <div class="tx"><h3>Vrai / Faux justifié</h3><p>Tu dois écrire pourquoi — muscle la rédaction QRC (série de 10)</p></div>
         <div class="chev">›</div>
       </button>
       <button class="module-card" data-nav="seuils">
@@ -386,12 +488,12 @@ textarea.justif::placeholder { color: var(--ink-mute); }
       </button>
       <button class="module-card" data-nav="banque">
         <div class="ic" style="background:var(--cac-soft);">📚</div>
-        <div class="tx"><h3>Banque de règles</h3><p>356 règles issues des annales, classées par source</p></div>
+        <div class="tx"><h3>Banque de règles</h3><p>Règles issues des annales, classées par source</p></div>
         <div class="chev">›</div>
       </button>
       <button class="module-card" data-nav="sourcequiz">
         <div class="ic" style="background:var(--bg-deep);">📖</div>
-        <div class="tx"><h3>Sources</h3><p>Devine dans quel ouvrage se trouve la règle — 10 questions</p></div>
+        <div class="tx"><h3>Sources</h3><p>Devine dans quel ouvrage se trouve la règle (série de 10)</p></div>
         <div class="chev">›</div>
       </button>
       <button class="module-card" data-nav="drill">
@@ -401,6 +503,40 @@ textarea.justif::placeholder { color: var(--ink-mute); }
       </button>
     </div>
   </section>
+
+  <!-- ============ PARAMETRES ============ -->
+  <section id="view-settings" class="view hidden">
+    <div class="topbar">
+      <button class="back" data-nav="home"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Paramètres</div>
+    </div>
+    <div class="content">
+      <div class="section-label">Compte</div>
+      <div class="settings-list" id="settings-account-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ MODAL MA PROGRESSION ============ -->
+  <div class="progress-overlay" id="modal-progress">
+    <div class="progress-sheet">
+      <div class="progress-handle"></div>
+      <div class="progress-card">
+        <div class="progress-card-head">
+          <div>
+            <div class="progress-card-title">Ma progression <em>DEC UE2</em></div>
+            <div class="progress-card-sub">Révision légale &amp; contractuelle</div>
+          </div>
+          <div class="progress-flame">🔥</div>
+        </div>
+        <div class="progress-kpis" id="progress-kpis"></div>
+        <div class="progress-chart-label">Activité — 7 derniers jours</div>
+        <div class="progress-bars-wrap" id="progress-bars"></div>
+      </div>
+      <div class="progress-actions">
+        <button class="btn secondary" id="progress-close-btn">Fermer</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ============ MISE EN SITUATION ============ -->
   <section id="view-situation" class="view hidden">
@@ -491,8 +627,8 @@ textarea.justif::placeholder { color: var(--ink-mute); }
    Remplace ces deux valeurs par celles de TON projet Supabase :
    Project Settings > API > Project URL / anon public key
    =================================================================== */
-const SUPABASE_URL = "https://mlppnktthqgipcgnpgnp.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_2oilb7ofnczMgPlQVRNHwA_BSo5jUFT";
+const SUPABASE_URL = "https://VOTRE-PROJET.supabase.co";
+const SUPABASE_ANON_KEY = "VOTRE_CLE_ANON_PUBLIC";
 
 let RULES = [];
 let SITUATIONS = [];
@@ -500,6 +636,17 @@ let VRAIFAUX = [];
 let SEUILS_CONTENU = [];
 
 let sb = null;
+
+// Suivi de l'utilisateur connecté
+const Auth = {
+  user: null,          // { id, email }
+  profile: null,       // ligne de ue2_profiles
+  progress: {},        // { [question_id]: { status, seen_count, last_seen_at } }
+  mode: 'signin',      // 'signin' | 'signup' | 'reset'
+  error: null,
+  info: null,
+  pendingEmail: null
+};
 
 function isConfigured(){
   return !SUPABASE_URL.includes('VOTRE-PROJET') && !SUPABASE_ANON_KEY.includes('VOTRE_CLE');
@@ -516,7 +663,9 @@ async function loadData(){
   }
   showScreen('loading');
   try {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    });
     const [rulesRes, sitRes, vfRes, seuilsRes] = await Promise.all([
       sb.from('ue2_rules').select('*').order('id'),
       sb.from('ue2_situations').select('*').order('id'),
@@ -544,8 +693,7 @@ async function loadData(){
       return;
     }
 
-    showScreen('app');
-    initApp();
+    initAuthFlow();
   } catch(err){
     showScreen('error', err.message || String(err));
   }
@@ -555,6 +703,8 @@ function showScreen(which, errorMsg){
   document.getElementById('loading-screen').classList.toggle('hidden', which !== 'loading');
   document.getElementById('setup-screen').classList.toggle('hidden', which !== 'setup');
   document.getElementById('error-screen').classList.toggle('hidden', which !== 'error');
+  document.getElementById('auth-screen').classList.toggle('hidden', which !== 'auth');
+  document.getElementById('verify-screen').classList.toggle('hidden', which !== 'verify');
   document.getElementById('app').classList.toggle('hidden', which !== 'app');
   if(which === 'error' && errorMsg){
     document.getElementById('error-message').textContent = errorMsg;
@@ -562,6 +712,366 @@ function showScreen(which, errorMsg){
 }
 
 document.getElementById('retry-btn')?.addEventListener('click', loadData);
+
+/* ===================================================================
+   AUTHENTIFICATION (comptes email / mot de passe, comme DEC UE1)
+   =================================================================== */
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function humanizeAuthError(err){
+  const msg = (err && err.message) ? err.message : String(err);
+  const low = msg.toLowerCase();
+  if(low.includes('invalid login credentials')) return 'Email ou mot de passe incorrect.';
+  if(low.includes('user already registered')) return 'Un compte existe déjà pour cet email. Essaie de te connecter.';
+  if(low.includes('email not confirmed')) return "Tu dois d'abord confirmer ton email. Vérifie ta boîte mail.";
+  if(low.includes('password should be')) return 'Mot de passe trop court (6 caractères minimum).';
+  if(low.includes('rate limit') || low.includes('email rate')) return 'Trop de tentatives. Attends quelques minutes avant de réessayer.';
+  if(low.includes('network') || low.includes('fetch')) return 'Problème de connexion. Vérifie ton réseau.';
+  return msg;
+}
+
+function renderAuthForm(mode){
+  if(mode === 'reset'){
+    return `
+      <form id="auth-form" class="auth-form" autocomplete="on">
+        <div class="field">
+          <label for="auth-email">Ton email</label>
+          <input type="email" id="auth-email" name="email" required autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="prenom@exemple.fr">
+        </div>
+        <button type="submit" class="btn submit" data-mode="reset">Envoyer le lien</button>
+      </form>`;
+  }
+  if(mode === 'signup'){
+    return `
+      <form id="auth-form" class="auth-form" autocomplete="on">
+        <div class="field">
+          <label for="auth-email">Ton email</label>
+          <input type="email" id="auth-email" name="email" required autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="prenom@exemple.fr">
+        </div>
+        <div class="field">
+          <label for="auth-password">Choisis un mot de passe</label>
+          <input type="password" id="auth-password" name="password" required autocomplete="new-password" minlength="6" placeholder="au moins 6 caractères">
+        </div>
+        <button type="submit" class="btn submit" data-mode="signup">Créer mon compte</button>
+      </form>`;
+  }
+  return `
+    <form id="auth-form" class="auth-form" autocomplete="on">
+      <div class="field">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" name="email" required autocomplete="email" autocapitalize="none" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="auth-password">Mot de passe</label>
+        <input type="password" id="auth-password" name="password" required autocomplete="current-password">
+      </div>
+      <a href="#" class="forgot" id="forgot-link">Mot de passe oublié ?</a>
+      <button type="submit" class="btn submit" data-mode="signin">Se connecter</button>
+    </form>`;
+}
+
+function renderAuth(){
+  const root = document.getElementById('auth-screen');
+  const mode = Auth.mode, err = Auth.error, info = Auth.info;
+  root.innerHTML = `
+    <div class="screen-auth">
+      <div class="masthead">
+        <div class="kicker">DEC · UE 2</div>
+        <h1>Révision légale<br>&amp; <em>contractuelle</em></h1>
+        <p>Cas pratique, mises en situation et vrai/faux — ta progression est sauvegardée sur ton compte.</p>
+      </div>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab ${mode==='signin'?'active':''}" data-mode="signin">Connexion</button>
+        <button type="button" class="auth-tab ${mode==='signup'?'active':''}" data-mode="signup">Créer un compte</button>
+      </div>
+      ${mode==='reset' ? `<button type="button" class="btn ghost back-to-signin" id="back-to-signin">← Retour à la connexion</button>` : ''}
+      ${err ? `<div class="auth-msg error">${escapeHtml(err)}</div>` : ''}
+      ${info ? `<div class="auth-msg info">${escapeHtml(info)}</div>` : ''}
+      ${renderAuthForm(mode)}
+      <div class="disclaimer">Ton avancement est synchronisé entre tous tes appareils. Ton email ne sert qu'à te connecter ; aucune autre utilisation.</div>
+    </div>`;
+  showScreen('auth');
+
+  root.querySelectorAll('.auth-tab').forEach(t=>{
+    t.addEventListener('click', ()=>{ Auth.mode = t.dataset.mode; Auth.error=null; Auth.info=null; renderAuth(); });
+  });
+  root.querySelector('#back-to-signin')?.addEventListener('click', ()=>{ Auth.mode='signin'; Auth.error=null; Auth.info=null; renderAuth(); });
+  root.querySelector('#forgot-link')?.addEventListener('click', (e)=>{ e.preventDefault(); Auth.mode='reset'; Auth.error=null; Auth.info=null; renderAuth(); });
+  root.querySelector('#auth-form')?.addEventListener('submit', handleAuthSubmit);
+}
+
+async function handleAuthSubmit(e){
+  e.preventDefault();
+  const form = e.currentTarget;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const mode = submitBtn.dataset.mode;
+  const email = (form.querySelector('#auth-email')?.value || '').trim().toLowerCase();
+  const password = form.querySelector('#auth-password')?.value || '';
+
+  if(!email){ Auth.error = 'Merci de saisir ton email.'; renderAuth(); return; }
+  Auth.error = null; Auth.info = null;
+  submitBtn.disabled = true; submitBtn.textContent = '…';
+
+  try {
+    if(mode === 'signup'){
+      if(password.length < 6) throw new Error('Le mot de passe doit faire au moins 6 caractères.');
+      const { error } = await sb.auth.signUp({ email, password });
+      if(error) throw error;
+      Auth.pendingEmail = email;
+      renderVerify();
+    } else if(mode === 'signin'){
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw error;
+      // onAuthStateChange prend le relai pour charger le profil et afficher l'app
+    } else if(mode === 'reset'){
+      const { error } = await sb.auth.resetPasswordForEmail(email);
+      if(error) throw error;
+      Auth.info = "Si un compte existe pour cet email, un lien de réinitialisation vient d'être envoyé. Vérifie ta boîte mail.";
+      renderAuth();
+    }
+  } catch(err){
+    Auth.error = humanizeAuthError(err);
+    renderAuth();
+  }
+}
+
+function renderVerify(){
+  const root = document.getElementById('verify-screen');
+  const email = Auth.pendingEmail || 'ton adresse';
+  root.innerHTML = `
+    <div class="screen-verify">
+      <div class="kicker">Compte créé</div>
+      <h1>Vérifie ta boîte mail.</h1>
+      <p>On vient d'envoyer un lien de confirmation à :</p>
+      <span class="email-echo">${escapeHtml(email)}</span>
+      <p>Ouvre ce mail et clique sur le lien pour activer ton compte. Regarde dans les spams si tu ne le vois pas.</p>
+      <p style="font-size:13px;color:var(--ink-mute);">Une fois le compte activé, tu pourras te connecter ici.</p>
+      <div class="actions">
+        <button class="btn" id="go-signin">J'ai confirmé, me connecter</button>
+        <button class="btn secondary" id="change-email">Utiliser un autre email</button>
+      </div>
+    </div>`;
+  showScreen('verify');
+  root.querySelector('#go-signin').addEventListener('click', ()=>{ Auth.mode='signin'; Auth.error=null; renderAuth(); });
+  root.querySelector('#change-email').addEventListener('click', async ()=>{
+    try{ await sb.auth.signOut(); }catch(e){}
+    Auth.pendingEmail = null; Auth.mode = 'signup'; renderAuth();
+  });
+}
+
+/* ---------- Profil & progression (table ue2_profiles / ue2_progress) ---------- */
+async function ensureProfile(userId){
+  let { data, error } = await sb.from('ue2_profiles').select('*').eq('id', userId).maybeSingle();
+  if(error) throw error;
+  if(!data){
+    // Filet de sécurité si le trigger côté SQL n'a pas encore créé la ligne
+    const ins = await sb.from('ue2_profiles').insert({ id: userId }).select('*').single();
+    if(ins.error) throw ins.error;
+    data = ins.data;
+  }
+  return data;
+}
+
+async function loadProgress(userId){
+  const { data, error } = await sb.from('ue2_progress').select('*').eq('user_id', userId);
+  if(error) throw error;
+  const map = {};
+  (data||[]).forEach(row => { map[row.question_id] = row; });
+  return map;
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+async function updateStreakIfNeeded(){
+  const today = todayStr();
+  if(!Auth.profile || Auth.profile.streak_last_day === today) return;
+  const last = Auth.profile.streak_last_day;
+  let current;
+  if(last){
+    const diffDays = Math.round((new Date(today) - new Date(last)) / 86400000);
+    current = diffDays === 1 ? (Auth.profile.streak_current||0) + 1 : 1;
+  } else {
+    current = 1;
+  }
+  const longest = Math.max(current, Auth.profile.streak_longest||0);
+  Auth.profile.streak_current = current;
+  Auth.profile.streak_longest = longest;
+  Auth.profile.streak_last_day = today;
+  updateDashStats();
+  try {
+    await sb.from('ue2_profiles').update({
+      streak_current: current, streak_longest: longest, streak_last_day: today, updated_at: new Date().toISOString()
+    }).eq('id', Auth.user.id);
+  } catch(e){ console.warn('streak update failed', e); }
+}
+
+// Enregistre qu'une question a été vue, et éventuellement maîtrisée (réponse correcte)
+async function trackAnswer(questionId, correct, countsForMastery=true){
+  if(!Auth.user) return;
+  updateStreakIfNeeded();
+  const existing = Auth.progress[questionId];
+  const newStatus = (correct && countsForMastery) ? 'mastered' : (existing?.status || 'seen');
+  const seenCount = (existing?.seen_count || 0) + 1;
+  const nowIso = new Date().toISOString();
+  Auth.progress[questionId] = { user_id: Auth.user.id, question_id: questionId, status: newStatus, seen_count: seenCount, last_seen_at: nowIso };
+  updateDashStats();
+  try {
+    await sb.from('ue2_progress').upsert({
+      user_id: Auth.user.id, question_id: questionId, status: newStatus, seen_count: seenCount, last_seen_at: nowIso
+    }, { onConflict: 'user_id,question_id' });
+  } catch(e){ console.warn('progress upsert failed', e); }
+}
+
+function updateDashStats(){
+  const total = RULES.length || 356;
+  const rows = Object.values(Auth.progress);
+  const mastered = rows.filter(r => r.status === 'mastered').length;
+  const views = rows.length;
+  const streak = Auth.profile?.streak_current || 0;
+  const elMastered = document.getElementById('dash-mastered');
+  const elTotal = document.getElementById('dash-total');
+  const elViews = document.getElementById('dash-views');
+  const elStreak = document.getElementById('dash-streak');
+  if(elMastered) elMastered.textContent = mastered;
+  if(elTotal) elTotal.textContent = total;
+  if(elViews) elViews.textContent = views;
+  if(elStreak) elStreak.textContent = streak + ' 🔥';
+}
+
+function openProgressModal(){
+  const total = RULES.length || 356;
+  const rows = Object.values(Auth.progress);
+  const mastered = rows.filter(r => r.status==='mastered').length;
+  const views = rows.length;
+  const streak = Auth.profile?.streak_current || 0;
+  const longest = Auth.profile?.streak_longest || 0;
+
+  document.getElementById('progress-kpis').innerHTML = `
+    <div class="progress-kpi"><div class="num">${mastered}<span class="unit">/${total}</span></div><div class="lbl">Maîtrisées</div></div>
+    <div class="progress-kpi"><div class="num">${views}</div><div class="lbl">Vues</div></div>
+    <div class="progress-kpi"><div class="num">${streak}</div><div class="lbl">Série (record ${longest})</div></div>
+  `;
+
+  // Activité des 7 derniers jours, à partir des dates last_seen_at
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  const counts = {};
+  days.forEach(d => counts[d]=0);
+  rows.forEach(r=>{
+    const d = (r.last_seen_at||'').slice(0,10);
+    if(counts[d] !== undefined) counts[d]++;
+  });
+  const max = Math.max(1, ...Object.values(counts));
+  const dayLabels = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  document.getElementById('progress-bars').innerHTML = days.map(d=>{
+    const c = counts[d];
+    const h = Math.max(4, Math.round((c/max)*70));
+    const isToday = d === todayStr();
+    const dow = dayLabels[new Date(d+'T12:00:00').getDay()];
+    return `<div class="progress-bar-col">
+      <div class="progress-bar-inner"><div class="progress-bar-el ${c>0?'has-data':''} ${isToday?'is-today':''}" style="height:${h}px"></div></div>
+      <div class="progress-day ${isToday?'is-today':''}">${dow}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal-progress').classList.add('open');
+}
+document.getElementById('btn-open-progress')?.addEventListener('click', openProgressModal);
+document.getElementById('progress-close-btn')?.addEventListener('click', ()=> document.getElementById('modal-progress').classList.remove('open'));
+
+/* ---------- Paramètres ---------- */
+function renderSettingsList(){
+  const email = Auth.user?.email || '';
+  const list = document.getElementById('settings-account-list');
+  if(!list) return;
+  list.innerHTML = `
+    <button class="settings-row" id="s-email" disabled>
+      <div class="s-label">Email</div>
+      <div class="s-meta">${escapeHtml(email)}</div>
+    </button>
+    <button class="settings-row" id="s-password">
+      <div class="s-label">Changer de mot de passe</div>
+      <div class="s-meta">›</div>
+    </button>
+    <button class="settings-row" id="s-reset">
+      <div class="s-label">Recevoir un lien de réinitialisation</div>
+      <div class="s-meta">›</div>
+    </button>
+    <button class="settings-row danger" id="s-signout">
+      <div class="s-label">Se déconnecter</div>
+    </button>
+  `;
+  list.querySelector('#s-password').addEventListener('click', async ()=>{
+    const np = prompt('Nouveau mot de passe (6 caractères minimum) :');
+    if(!np) return;
+    if(np.length < 6){ toast('Trop court (6 caractères minimum)'); return; }
+    try{
+      const { error } = await sb.auth.updateUser({ password: np });
+      if(error) throw error;
+      toast('Mot de passe mis à jour ✅');
+    }catch(err){ toast(humanizeAuthError(err)); }
+  });
+  list.querySelector('#s-reset').addEventListener('click', async ()=>{
+    try{
+      const { error } = await sb.auth.resetPasswordForEmail(email);
+      if(error) throw error;
+      toast('Email de réinitialisation envoyé ✉️');
+    }catch(err){ toast(humanizeAuthError(err)); }
+  });
+  list.querySelector('#s-signout').addEventListener('click', async ()=>{
+    if(!confirm('Se déconnecter ? Ta progression reste enregistrée dans ton compte.')) return;
+    try{ await sb.auth.signOut(); }catch(e){}
+  });
+}
+
+/* ---------- Démarrage : bascule auth <-> app ---------- */
+async function handleAuthenticated(session){
+  Auth.user = { id: session.user.id, email: session.user.email };
+  try {
+    Auth.profile = await ensureProfile(Auth.user.id);
+    Auth.progress = await loadProgress(Auth.user.id);
+  } catch(err){
+    showScreen('error', "Connexion réussie, mais impossible de charger ton profil : " + (err.message||err));
+    return;
+  }
+  showScreen('app');
+  initApp();
+}
+
+function handleSignedOut(){
+  Auth.user = null; Auth.profile = null; Auth.progress = {};
+  Auth.mode = 'signin'; Auth.error = null; Auth.info = null;
+  renderAuth();
+}
+
+function initAuthFlow(){
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if(event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED'){
+      if(session && (!Auth.user || Auth.user.id !== session.user.id)){
+        await handleAuthenticated(session);
+      }
+    } else if(event === 'SIGNED_OUT'){
+      handleSignedOut();
+    } else if(event === 'PASSWORD_RECOVERY'){
+      Auth.mode = 'signin';
+      Auth.info = 'Tu peux définir un nouveau mot de passe dans Paramètres → Changer de mot de passe.';
+    }
+  });
+  (async ()=>{
+    const { data } = await sb.auth.getSession();
+    if(data?.session?.user){
+      await handleAuthenticated(data.session);
+    } else {
+      Auth.mode = 'signin';
+      renderAuth();
+    }
+  })();
+}
 
 /* ===================================================================
    ETAT & NAVIGATION
@@ -579,16 +1089,24 @@ function shuffle(arr){
   return arr;
 }
 
+const SESSION_SIZE = 10;
+
+function drawSession(arr){
+  return shuffle(arr.slice()).slice(0, Math.min(SESSION_SIZE, arr.length));
+}
+
 function nav(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
   document.getElementById('view-'+view).classList.remove('hidden');
   window.scrollTo(0,0);
-  if(view==='situation'){ if(State.sit.items.length===0) State.sit = {i:0,score:0,items:shuffle(SITUATIONS.slice())}; renderSituation(); }
-  if(view==='vraifaux'){ if(State.vf.items.length===0) State.vf = {i:0,score:0,items:shuffle(VRAIFAUX.slice())}; renderVF(); }
+  if(view==='situation'){ State.sit = {i:0,score:0,items:drawSession(SITUATIONS)}; renderSituation(); }
+  if(view==='vraifaux'){ State.vf = {i:0,score:0,items:drawSession(VRAIFAUX)}; renderVF(); }
   if(view==='seuils') renderSeuils();
   if(view==='banque') renderBanque();
   if(view==='sourcequiz') startSourceQuiz();
   if(view==='drill') startDrill();
+  if(view==='settings') renderSettingsList();
+  if(view==='home') updateDashStats();
 }
 document.addEventListener('click', e=>{
   const nb = e.target.closest('[data-nav]');
@@ -601,13 +1119,12 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'), 1600);
 }
 
-/* ---------- Initialisation une fois les données chargées ---------- */
+/* ---------- Initialisation une fois les données + le profil chargés ---------- */
 function initApp(){
-  document.getElementById('stat-rules').textContent = RULES.length;
-  document.getElementById('stat-sessions').textContent = new Set(RULES.map(r=>r.session)).size;
   State.sit = {i:0,score:0,items:[]};
   State.vf = {i:0,score:0,items:[]};
   nav('home');
+  updateDashStats();
 }
 
 /* Lance le chargement des données depuis Supabase au démarrage */
@@ -622,7 +1139,7 @@ function renderSituation(){
         <div class="kicker">Terminé</div>
         <div class="big-score">${s.score}/${s.items.length}</div>
         <p style="color:var(--ink-soft);font-size:14px;">Bonnes réponses sur cette série.</p>
-        <button class="btn cac" onclick="State.sit={i:0,score:0,items:shuffle(State.sit.items)};renderSituation()">Rejouer (ordre mélangé)</button>
+        <button class="btn cac" onclick="State.sit={i:0,score:0,items:drawSession(SITUATIONS)};renderSituation()">Rejouer (10 nouvelles questions)</button>
         <button class="btn secondary" style="margin-top:10px;" onclick="nav('home')">Retour à l'accueil</button>
       </div>`;
     document.getElementById('sit-progress-fill').style.width='100%';
@@ -646,8 +1163,10 @@ function renderSituation(){
       if(btn.classList.contains('answered')) return;
       document.querySelectorAll('#sit-options .option').forEach(b=>b.classList.add('disabled','answered'));
       const i = +btn.dataset.i;
-      if(i===q.correct){ btn.classList.add('correct'); State.sit.score++; }
+      const isCorrect = i===q.correct;
+      if(isCorrect){ btn.classList.add('correct'); State.sit.score++; }
       else { btn.classList.add('wrong'); document.querySelectorAll('#sit-options .option')[q.correct].classList.add('correct'); }
+      trackAnswer(q.id, isCorrect);
       document.getElementById('sit-reveal').innerHTML = `
         <div class="reveal-panel">
           <div class="rp-head"><strong>${i===q.correct?'Exact.':'La bonne réponse était : '+letters[q.correct]}</strong></div>
@@ -668,7 +1187,7 @@ function renderVF(){
         <div class="kicker">Terminé</div>
         <div class="big-score">${s.score}/${s.items.length}</div>
         <p style="color:var(--ink-soft);font-size:14px;">Bonnes réponses sur cette série.</p>
-        <button class="btn cac" onclick="State.vf={i:0,score:0,items:shuffle(State.vf.items)};renderVF()">Rejouer (ordre mélangé)</button>
+        <button class="btn cac" onclick="State.vf={i:0,score:0,items:drawSession(VRAIFAUX)};renderVF()">Rejouer (10 nouvelles questions)</button>
         <button class="btn secondary" style="margin-top:10px;" onclick="nav('home')">Retour à l'accueil</button>
       </div>`;
     document.getElementById('vf-progress-fill').style.width='100%';
@@ -702,6 +1221,7 @@ function renderVF(){
     document.querySelectorAll('.vf-btn').forEach(b=>b.style.pointerEvents='none');
     const correct = picked === q.answer;
     if(correct) State.vf.score++;
+    trackAnswer(q.id, correct);
     document.getElementById('vf-reveal').innerHTML = `
       <div class="reveal-panel">
         <div class="rp-head"><strong>${correct?'Exact.':'Réponse : '+(q.answer?'Vrai':'Faux')}</strong></div>
@@ -763,7 +1283,7 @@ function drawBanqueList(){
       <div class="ri-source">${r.source} · ${r.session}</div>
     </div>`).join('') + (items.length>200 ? `<div class="empty-state">+ ${items.length-200} autres résultats — affine ta recherche</div>` : '');
   el.querySelectorAll('.rule-item').forEach(it=>{
-    it.addEventListener('click', ()=> it.classList.toggle('open'));
+    it.addEventListener('click', ()=> { it.classList.toggle('open'); if(it.classList.contains('open')) trackAnswer(+it.dataset.id, false, false); });
   });
 }
 
@@ -810,6 +1330,7 @@ function renderSourceQuiz(){
       const i = +btn.dataset.i;
       if(i===correctIndex){ btn.classList.add('correct'); State.sq.score++; }
       else { btn.classList.add('wrong'); document.querySelectorAll('#sq-options .option')[correctIndex].classList.add('correct'); }
+      trackAnswer(item.id, i===correctIndex, false);
       document.getElementById('sq-reveal').innerHTML = `
         <div class="reveal-panel">
           <div class="rp-head"><strong>${i===correctIndex?'Exact.':'La bonne réponse : '+item.sheet}</strong></div>
@@ -859,8 +1380,10 @@ function drawDrillQuestion(){
         if(!State.drill.timer) return;
         document.querySelectorAll('#drill-options .option').forEach(b=>b.style.pointerEvents='none');
         const i = +btn.dataset.i;
-        if(i===item.correct){ btn.classList.add('correct'); State.drill.score++; }
+        const ok = i===item.correct;
+        if(ok){ btn.classList.add('correct'); State.drill.score++; }
         else btn.classList.add('wrong');
+        trackAnswer(item.id, ok);
         setTimeout(()=>{ State.drill.i++; drawDrillQuestion(); }, 500);
       });
     });
@@ -878,8 +1401,10 @@ function drawDrillQuestion(){
         if(!State.drill.timer) return;
         document.querySelectorAll('#drill-vf .vf-btn').forEach(b=>b.style.pointerEvents='none');
         const v = btn.dataset.v === 'true';
-        if(v===item.answer){ btn.classList.add(v?'true-pick':'false-pick'); btn.style.background='var(--cac-soft)'; State.drill.score++; }
+        const ok = v===item.answer;
+        if(ok){ btn.classList.add(v?'true-pick':'false-pick'); btn.style.background='var(--cac-soft)'; State.drill.score++; }
         else btn.style.background='var(--ec-soft)';
+        trackAnswer(item.id, ok);
         setTimeout(()=>{ State.drill.i++; drawDrillQuestion(); }, 500);
       });
     });
